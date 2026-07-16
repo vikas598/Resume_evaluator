@@ -84,3 +84,39 @@ def get_jd():
     jobd=Jd(**raw_json)
     return jobd
 
+def resume_extractor(filepath):
+    if filepath.lower().endswith(".pdf"):
+        text=pdf_extractor(filepath)
+    elif filepath.lower().endswith(".docx"):
+        text=docx_extractor(filepath)
+    else:
+        raise ValueError("invalid file type!! ")
+    return text
+
+def pdf_extractor(filepath):
+    reader= PdfReader(filepath)
+    text= "\n".join(
+        page.extract_text() or ""
+        for page in reader.pages
+    )
+    return text
+
+def docx_extractor(filepath):
+    doc = Document(filepath)
+
+    text = ""
+
+    # Extract paragraphs
+    for para in doc.paragraphs:
+        if para.text.strip():
+            text += para.text.strip() + "\n"
+
+    # Extract tables
+    for table in doc.tables:
+        for row in table.rows:
+            row_text = " | ".join(cell.text.strip() for cell in row.cells)
+            text += row_text + "\n"
+
+    return text
+        
+
