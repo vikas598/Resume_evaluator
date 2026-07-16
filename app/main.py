@@ -24,27 +24,28 @@ class Jd(BaseModel):
     responsibility:str
 
 class Experience(BaseModel):
-    company:str
-    role:str
-    tech_stack:list[str]
-    duration:str
-    description:str
+    company:str | None
+    role:str | None
+    tech_stack:list[str] | None
+    duration:str | None
+    description:str | None
 
 class Resume(BaseModel):
     name:str
-    email:str
-    phone_no: int
-    skills:list[str]
-    experiences: list[Experience]
-    projects: list[str]
-    certifications: list[str]
+    email:str | None
+    phone_no: int | None
+    skills:list[str] | None
+    experiences: list[Experience] | None
+    projects: list[str] | None
+    certifications: list[str] | None
 
 class Result(BaseModel):
     score:float
     detail:dict
 
 schema_jd= Jd.model_json_schema()
-response_type={"type":"json_object"}
+schema_resume= Resume.model_json_schema()
+response_format={"type":"json_object"}
 
 def get_jd():  
     with open("job_description.txt", "r") as file:
@@ -78,7 +79,7 @@ def get_jd():
         'content': prompt
     }
     messsages=[message]
-    response= client.chat.completions.create(model=MODEL, messages=messsages, response_format=response_type)
+    response= client.chat.completions.create(model=MODEL, messages=messsages, response_format=response_format)
     result =response.choices[0].message.content
     raw_json= json.loads(result)
     jobd=Jd(**raw_json)
@@ -118,5 +119,79 @@ def docx_extractor(filepath):
             text += row_text + "\n"
 
     return text
-        
 
+def resume_parser(text):
+    system_prompt= f'''
+        You are an expert Resume Analyzer specializing in extracting structured information from resumes.
+
+        The user will provide a resume. Your task is to carefully analyze the resume and extract all relevant information according to the provided Resume schema.
+
+        resume schema: 
+
+        Guidelines: {schema_resume}
+        - Extract only information that is explicitly stated in the resume.
+        - Do NOT invent, assume, infer, or exaggerate any information.
+        - Do NOT fill in missing details based on context or common assumptions.
+        - Every field defined in the schema must be present in the output.
+        - If a scalar field (such as name, email, phone number, location, designation, etc.) is missing, return `null`.
+        - If a list field (such as skills, education, work_experience, projects, certifications, languages, achievements, publications, etc.) is missing, return an empty list (`[]`).
+        - If a nested object's property is missing, set that property to `null`.
+        - Preserve the original information without rewording or adding extra details.
+        - Ensure the output strictly conforms to the provided Resume schema.
+        - Return only a valid JSON object.
+        - Do not include explanations, markdown, comments, or any text outside the JSON response.
+        '''
+    system_message={
+        "role": "system",
+        "content": system_prompt
+    }
+
+    message={
+        'role': "user",
+        "content": text
+    }
+    messsages=[system_message,message]
+    response= client.chat.completions.create(model=MODEL, messages=messsages, response_format=response_format)
+    result =response.choices[0].message.content
+    raw_json= json.loads(result)
+    resume=Jd(**raw_json)
+    return resume
+
+def score(jobd, resume):
+    match_schema= Result.model_json_schema
+    prompt = f"""
+    You are an HR recruiter.
+
+    Compare the candidate's resume with the job description.
+
+    JOB DESCRIPTION:
+    {jobd.model_dump_json(indent=2)}
+
+    CANDIDATE RESUME:
+    {resume.model_dump_json(indent=2)}
+    Return JSON matching this schema:
+
+    {match_schema}
+
+    Give me:
+
+    1. Candidate name
+    2. Matching skills
+    3. Missing important skills
+    4. Whether experience requirement is met
+    5. Overall match percentage from 0 to 100
+    6. A short final verdict
+
+    Keep the response concise and easy to read.
+    """
+    message={
+        "role": "user",
+        "content" : prompt
+    }
+    messages=[message]
+    response_format={
+        "type": "json_object"
+    }
+    response = client.chat.completions.create(model=MODEL, messages=messages, response_format=response_format)
+    data = json.loads(response.choices[0].message.content)
+    return Result(**data)
