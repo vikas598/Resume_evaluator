@@ -5,6 +5,8 @@ from pypdf import PdfReader
 from docx import Document
 from pydantic import BaseModel
 import json
+from pathlib import Path
+import time
 
 load_dotenv()
 API_KEY= os.getenv("GROQ_API_KEY")
@@ -16,79 +18,80 @@ if not API_KEY:
 client = Groq(api_key=API_KEY)
 
 class Jd(BaseModel):
-    role:str
-    required_skills:list[str]
-    preffered_skills: list[str]
-    minimum_experience: str
-    educational_requirements: list[str]
-    responsibility:str
+    role: str | None = None
+    required_skills: list[str] = []
+    preferred_skills: list[str] = []
+    minimum_experience: str | None = None
+    educational_requirements: list[str] = []
+    responsibility: str | None = None
 
 class Experience(BaseModel):
-    company:str | None
-    role:str | None
-    tech_stack:list[str] | None
-    duration:str | None
-    description:str | None
+    company: str | None = None
+    role: str | None = None
+    tech_stack: list[str] = []
+    duration: str | None = None
+    description: str | None = None
 
 class Resume(BaseModel):
-    name:str
-    email:str | None
-    phone_no: int | None
-    skills:list[str] | None
-    experiences: list[Experience] | None
-    projects: list[str] | None
-    certifications: list[str] | None
+    name: str | None = None
+    email: str | None = None
+    phone_no: str | None = None
+    skills: list[str] = []
+    experiences: list[Experience] = []
+    projects: list[str] = []
+    certifications: list[str] = []
 
 class Result(BaseModel):
     score:float
     detail:dict
 
-schema_jd= Jd.model_json_schema()
-schema_resume= Resume.model_json_schema()
 response_format={"type":"json_object"}
 
-def get_jd():  
-    with open("job_description.txt", "r") as file:
-        JD= file.read()
-        print(JD)
-    
-    prompt=f'''
-        You are an expert HR assistant specializing in analyzing job descriptions.
+def get_jd(jd_text: str) -> Jd:
+    schema = Jd.model_json_schema()
 
-        Your task is to carefully read the provided job description and extract all relevant information according to the provided JD schema. Return the extracted information as a valid JSON object that strictly conforms to the schema.
+    system_prompt = f"""
+You are an expert HR assistant specializing in analyzing job descriptions.
 
-        Guidelines:
-        - Extract only information that is explicitly stated or can be directly inferred from the job description.
-        - Do NOT invent, assume, infer, or exaggerate any information that is not present.
-        - If a field or value is not mentioned in the job description, return `null` for that field.
-        - If a list-type field is not mentioned, return `null` instead of an empty list unless the schema explicitly requires otherwise.
-        - If a nested object contains missing fields, set those individual fields to `null`.
-        - Preserve the original meaning of the job description without adding extra context.
-        - Return only valid JSON.
-        - Do not include explanations, markdown, comments, or any additional text outside the JSON response.
-        - Ensure the output strictly follows the provided JD schema.
+Your task is to extract all relevant information from the job description according to the provided schema.
 
-        Input:
-        {JD}
+Schema:
+{json.dumps(schema, indent=2)}
 
-        Output:
-        {schema_jd}
-        '''
-    message={
-        'role':'user',
-        'content': prompt
-    }
-    messsages=[message]
-    response= client.chat.completions.create(model=MODEL, messages=messsages, response_format=response_format)
-    result =response.choices[0].message.content
-    raw_json= json.loads(result)
-    jobd=Jd(**raw_json)
-    return jobd
+Rules:
+- Extract only explicitly stated information.
+- Do not invent or assume any information.
+- If a scalar field is missing, return null.
+- If a list field is missing, return an empty list ([]).
+- Return ONLY valid JSON.
+- Do not include markdown or explanations.
+"""
 
-def resume_extractor(filepath):
-    if filepath.lower().endswith(".pdf"):
+    messages = [
+        {
+            "role": "system",
+            "content": system_prompt
+        },
+        {
+            "role": "user",
+            "content": jd_text
+        }
+    ]
+
+    response = client.chat.completions.create(
+        model=MODEL,
+        messages=messages,
+        response_format={"type": "json_object"}
+    )
+
+    data = json.loads(response.choices[0].message.content)
+
+    return Jd(**data)
+
+def file_extractor(filepath):
+    if filepath.suffix.lower() == ".pdf":
         text=pdf_extractor(filepath)
-    elif filepath.lower().endswith(".docx"):
+    elif filepath.suffix.lower() == ".docx":
         text=docx_extractor(filepath)
     else:
         raise ValueError("invalid file type!! ")
@@ -120,45 +123,51 @@ def docx_extractor(filepath):
 
     return text
 
-def resume_parser(text):
-    system_prompt= f'''
-        You are an expert Resume Analyzer specializing in extracting structured information from resumes.
+def resume_parser(resume_text: str) -> Resume:
+    schema = Resume.model_json_schema()
 
-        The user will provide a resume. Your task is to carefully analyze the resume and extract all relevant information according to the provided Resume schema.
+    system_prompt = f"""
+You are an expert Resume Analyzer.
 
-        resume schema: 
+The user will provide a resume.
 
-        Guidelines: {schema_resume}
-        - Extract only information that is explicitly stated in the resume.
-        - Do NOT invent, assume, infer, or exaggerate any information.
-        - Do NOT fill in missing details based on context or common assumptions.
-        - Every field defined in the schema must be present in the output.
-        - If a scalar field (such as name, email, phone number, location, designation, etc.) is missing, return `null`.
-        - If a list field (such as skills, education, work_experience, projects, certifications, languages, achievements, publications, etc.) is missing, return an empty list (`[]`).
-        - If a nested object's property is missing, set that property to `null`.
-        - Preserve the original information without rewording or adding extra details.
-        - Ensure the output strictly conforms to the provided Resume schema.
-        - Return only a valid JSON object.
-        - Do not include explanations, markdown, comments, or any text outside the JSON response.
-        '''
-    system_message={
-        "role": "system",
-        "content": system_prompt
-    }
+Extract all information according to the following schema.
 
-    message={
-        'role': "user",
-        "content": text
-    }
-    messsages=[system_message,message]
-    response= client.chat.completions.create(model=MODEL, messages=messsages, response_format=response_format)
-    result =response.choices[0].message.content
-    raw_json= json.loads(result)
-    resume=Jd(**raw_json)
-    return resume
+Schema:
+{json.dumps(schema, indent=2)}
 
-def score(jobd, resume):
-    match_schema= Result.model_json_schema
+Rules:
+- Extract only information explicitly present in the resume.
+- Do not invent or assume anything.
+- If a scalar field is missing, return null.
+- If a list field is missing, return an empty list ([]).
+- Return ONLY valid JSON.
+- Do not include markdown or explanations.
+"""
+
+    messages = [
+        {
+            "role": "system",
+            "content": system_prompt
+        },
+        {
+            "role": "user",
+            "content": resume_text
+        }
+    ]
+
+    response = client.chat.completions.create(
+        model=MODEL,
+        messages=messages,
+        response_format={"type": "json_object"}
+    )
+
+    data = json.loads(response.choices[0].message.content)
+
+    return Resume(**data)
+
+def score_generator(jobd, resume):
+    match_schema= Result.model_json_schema()
     prompt = f"""
     You are an HR recruiter.
 
@@ -195,3 +204,87 @@ def score(jobd, resume):
     response = client.chat.completions.create(model=MODEL, messages=messages, response_format=response_format)
     data = json.loads(response.choices[0].message.content)
     return Result(**data)
+
+def main():
+    all_results = []
+
+    # -------------------------------
+    # Read Job Description
+    # -------------------------------
+    jd_folder = Path("Job_description")
+
+    raw_jd = None
+
+    for file_path in jd_folder.iterdir():
+        if file_path.suffix.lower() == ".txt":
+            with open(file_path, "r", encoding="utf-8") as file:
+                raw_jd = file.read()
+        else:
+            raw_jd = file_extractor(file_path)
+
+        # Assuming there is only one JD
+        break
+
+    if raw_jd is None:
+        print("No Job Description found.")
+        return
+
+    jd = get_jd(raw_jd)
+
+    # -------------------------------
+    # Process all resumes
+    # -------------------------------
+    resume_folder = Path("resumes")
+
+    for file_path in resume_folder.iterdir():
+
+        if not file_path.is_file():
+            continue
+
+        raw_resume = file_extractor(file_path)
+
+        resume = resume_parser(raw_resume)
+
+        time.sleep(5)
+
+        result = score_generator(jd, resume)
+
+        time.sleep(5)
+
+        print(f"{resume.name}: {result.score}%")
+
+        all_results.append({
+            "name": resume.name or file_path.stem,
+            "score": result.score,
+            "detail": result.detail
+        })
+
+    # -------------------------------
+    # Sort candidates
+    # -------------------------------
+    all_results.sort(
+        key=lambda candidate: candidate["score"],
+        reverse=True
+    )
+
+    top_1 = all_results[:1]
+    worst_1 = all_results[-1:]
+
+    # -------------------------------
+    # Display Results
+    # -------------------------------
+    print("\n===== TOP CANDIDATE =====")
+
+    for candidate in top_1:
+        print(f"{candidate['name']} - {candidate['score']}%")
+        print(candidate["detail"])
+
+    print("\n===== LOWEST CANDIDATE =====")
+
+    for candidate in worst_1:
+        print(f"{candidate['name']} - {candidate['score']}%")
+        print(candidate["detail"])
+
+
+if __name__ == "__main__":
+    main()
