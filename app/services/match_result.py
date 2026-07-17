@@ -1,5 +1,5 @@
-from app.main import Result,client,MODEL
-from app.schema import Result
+from app.llm import client,MODEL
+from app.schemas.schema import Result
 import json
 
 def score_generator(jobd, resume):
