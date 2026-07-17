@@ -22,6 +22,9 @@ Rules:
 - If a list field is missing, return an empty list ([]).
 - Return ONLY valid JSON.
 - Do not include markdown or explanations.
+- tech_stack must always be an array of strings.
+- If there are no technologies, return an empty array [].
+- Never return null or a single string.
 """
 
     messages = [

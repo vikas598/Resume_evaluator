@@ -14,10 +14,6 @@ async def upload_jd(file: UploadFile = File(...)):
     return upload_jd_service(file)
 
 
-from typing import Annotated
-
 @router.post("/resume")
-async def upload_resume(
-    files: Annotated[list[UploadFile], File()]
-):
-    return {"count": len(files)}
+async def upload_resume(files: list[UploadFile] = File(...)):
+    return upload_resume_service(files)
