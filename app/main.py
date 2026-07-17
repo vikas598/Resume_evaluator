@@ -1,6 +1,5 @@
 from groq import Groq
-from dotenv import load_dotenv
-import os
+from config import settings
 import time
 from pathlib import Path
 
@@ -8,10 +7,13 @@ from services.text_extractor import file_extractor
 from services.jd_parser import get_jd
 from services.resume_parser import resume_parser
 from services.match_result import score_generator
+from app.database import Base, engine
+from app import models
 
-load_dotenv()
+Base.metadata.create_all(bind=engine)
 
-API_KEY = os.getenv("GROQ_API_KEY")
+
+API_KEY = settings.GROQ_API_KEY
 MODEL = "llama-3.3-70b-versatile"
 
 if not API_KEY:

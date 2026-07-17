@@ -1,5 +1,5 @@
 from app.main import client,MODEL
-from app.models import Jd
+from app.schema import Jd
 import json
 
 def get_jd(jd_text: str) -> Jd:

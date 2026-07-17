@@ -1,33 +1,45 @@
-from pydantic import BaseModel, Field
+from datetime import datetime
+from enum import Enum
+
+from sqlalchemy import String, DateTime, Enum as SQLEnum, func
+from sqlalchemy.orm import Mapped, mapped_column
+
+from app.database import Base
 
 
-class Jd(BaseModel):
-    role: str | None = None
-    required_skills: list[str] = Field(default_factory=list)
-    preferred_skills: list[str] = Field(default_factory=list)
-    minimum_experience: str | None = None
-    educational_requirements: list[str] = Field(default_factory=list)
-    responsibility: str | None = None
+class UserRole(str, Enum):
+    ADMIN = "admin"
+    HR = "hr"
+    CANDIDATE = "candidate"
 
 
-class Experience(BaseModel):
-    company: str | None = None
-    role: str | None = None
-    tech_stack: list[str] = Field(default_factory=list)
-    duration: str | None = None
-    description: str | None = None
+class User(Base):
+    __tablename__ = "users"
 
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(
+        String(50),
+        nullable=False,
+    )
 
-class Resume(BaseModel):
-    name: str | None = None
-    email: str | None = None
-    phone_no: str | None = None
-    skills: list[str] = Field(default_factory=list)
-    experiences: list[Experience] = Field(default_factory=list)
-    projects: list[str] = Field(default_factory=list)
-    certifications: list[str] = Field(default_factory=list)
+    email: Mapped[str] = mapped_column(
+        String(100),
+        unique=True,
+        nullable=False,
+    )
 
+    password: Mapped[str] = mapped_column(
+        String(255),
+        nullable=False,
+    )
 
-class Result(BaseModel):
-    score: float
-    detail: dict
+    role: Mapped[UserRole] = mapped_column(
+        SQLEnum(UserRole),
+        nullable=False,
+    )
+
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime,
+        server_default=func.now(),
+        nullable=False,
+    )

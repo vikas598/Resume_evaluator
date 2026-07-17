@@ -1,5 +1,5 @@
 from app.main import client,MODEL
-from app.models import Resume
+from app.schema import Resume
 import json
 
 def resume_parser(resume_text: str) -> Resume:
