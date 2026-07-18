@@ -22,7 +22,7 @@ class User(Base):
         nullable=False,
     )
 
-    email: Mapped[str] = mapped_column(
+    mail: Mapped[str] = mapped_column(
         String(100),
         unique=True,
         nullable=False,

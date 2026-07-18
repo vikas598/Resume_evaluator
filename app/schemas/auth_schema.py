@@ -12,11 +12,11 @@ class RegisterUser(BaseModel):
 
 class UserRegisterOut(BaseModel):
     id: int
-    email: EmailStr
+    mail: EmailStr
     created_at: datetime
 
 class UserLogin(BaseModel):
-    email : EmailStr
+    mail : EmailStr
     password: str 
 
 class Token(BaseModel):
