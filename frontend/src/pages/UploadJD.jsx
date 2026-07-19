@@ -1,9 +1,11 @@
 import { useState } from "react";
+import {useNavigate} from "react-router-dom";
 
 import api from "../services/api";
 
 function UploadJD() {
     const[file, setFile] = useState(null);
+    const navigate= useNavigate()
     const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
         setFile(selectedFile);
@@ -23,7 +25,7 @@ function UploadJD() {
         const formData = new FormData();
         formData.append("file", file);
 
-        response = await api.post(
+        const response = await api.post(
             "/upload/jd",
             formData,
             {
@@ -32,6 +34,7 @@ function UploadJD() {
                 },
             }
         );
+        navigate('/upload-resume');
     } catch (error) {
         console.log(error.response.data);
     }

@@ -24,6 +24,7 @@ function Result(){
                         <li key={index}>{skill}</li>
                     ))}
                 </ul>
+                <h3>Final Verdict</h3>
                 <p>{result.detail.final_verdict}</p>
             </div>
         ))}
