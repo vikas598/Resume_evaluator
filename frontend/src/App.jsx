@@ -4,6 +4,8 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import UploadResume from "./pages/UploadResume";
 import UploadJD from "./pages/UploadJD";
+import Result from "./pages/Result";
+
 
 function App() {
     return (
@@ -13,6 +15,7 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/upload-resume" element={<UploadResume />} />
                 <Route path="/upload-jd" element={<UploadJD />} />
+                <Route path="/result" element={<Result />} />
             </Routes>
         </BrowserRouter>
     );

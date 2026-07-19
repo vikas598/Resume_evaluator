@@ -1,9 +1,12 @@
 import { useState } from "react";
+import {useNavigate} from "react-router-dom";
+
 import api from "../services/api";
 
 function UploadResume() {
     const [files, setFiles] = useState([]);
 
+    const navigate= useNavigate()
     const handleFileChange = (e) => {
     const selectedFiles = Array.from(e.target.files);
     setFiles(selectedFiles);
@@ -36,7 +39,8 @@ function UploadResume() {
                     },
                 }
             );
-
+            localStorage.setItem('results', JSON.stringify(response.data))
+            navigate('/result');
             console.log(response.data);
             alert("Resume uploaded successfully!");
         } catch (error) {
