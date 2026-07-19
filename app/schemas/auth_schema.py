@@ -3,12 +3,10 @@ from datetime import datetime
 from typing import Optional
 
 class RegisterUser(BaseModel):
-    id: int
     name: str
     mail: str
     password: str
     role: str
-    created_at: datetime
 
 class UserRegisterOut(BaseModel):
     id: int
