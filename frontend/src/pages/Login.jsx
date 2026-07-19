@@ -1,8 +1,10 @@
 import {useState} from "react";
+import {useNavigate} from "react-router-dom";
 
 import api from "../services/api";
 
 function Login() {
+    const navigate = useNavigate();
     const[mail, setMail]=useState("")
     const[password, setPassword]= useState("")
     const handleSubmit = async (e) => {
@@ -17,9 +19,7 @@ function Login() {
             const response = await api.post("/login", formData);
 
             localStorage.setItem("token", response.data.access_token);
-            // console.log(localStorage.getItem("token"));
-
-            // console.log(response.data);
+            navigate('/upload-jd');
         }
         catch(error){
             console.log(error.response.data);
