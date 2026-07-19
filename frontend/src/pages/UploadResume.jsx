@@ -1,43 +1,70 @@
-import { useState} from "react";
-
+import { useState } from "react";
 import api from "../services/api";
 
 function UploadResume() {
-    cosnt[file, setFile ] = useState(null);
-    const handleFileChange = (e) =>{
-        const selectedFile = e.target.files[0];
-        setFile(selectedFile);
-        console.log(selectedFile);
+    const [files, setFiles] = useState([]);
+
+    const handleFileChange = (e) => {
+    const selectedFiles = Array.from(e.target.files);
+    setFiles(selectedFiles);
+
+    console.log(selectedFiles);
     };
-    const handelSubmit= async (e)=> {
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if(!file){
-            alert("Please select a resume");
+        if (files.length === 0) {
+            alert("Please select at least one resume.");
             return;
         }
 
-        try{
+        try {
             const token = localStorage.getItem("token");
 
             const formData = new FormData();
-            formData.append("files", files);
+            files.forEach((file) => {
+                formData.append("files", file);
+            });
 
-            response = await api.post("/upload/resume",
+            const response = await api.post(
+                "/upload/resume",
                 formData,
                 {
-                    headers:{
+                    headers: {
                         Authorization: `Bearer ${token}`,
                     },
                 }
             );
-        }catch(error){
-            console.log(error.response.data)
+
+            console.log(response.data);
+            alert("Resume uploaded successfully!");
+        } catch (error) {
+            console.log(error.response?.data || error.message);
         }
-    }
+    };
 
     return (
-        <h1>UploadResume Page</h1>
+        <div>
+            <h1>Upload Resume Page</h1>
+
+            <form onSubmit={handleSubmit}>
+                <div>
+                    <label>Upload Resume</label>
+                    <input
+                        type="file"
+                        multiple
+                        onChange={handleFileChange}
+                    />
+                </div>
+
+                <br />
+
+                <button type="submit">
+                    Upload Resume
+                </button>
+            </form>
+        </div>
     );
 }
 

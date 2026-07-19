@@ -49,9 +49,17 @@ function UploadJD() {
             />
                 </div>
             <div>
-                <button type="submit">
-                    Upload
-                </button>
+                <button
+    type="submit"
+    style={{
+        background: "red",
+        color: "white",
+        padding: "10px",
+        marginTop: "20px",
+    }}
+>
+    Upload
+</button>
             </div>
             </form>
         </div>
