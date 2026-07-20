@@ -95,7 +95,9 @@ function UploadResume() {
                                     ? "Change Files"
                                     : "Select Resume(s)"}
                             </label>
-
+                                    <p className="text-sm font-medium text-gray-700 mb-2">
+                                        {files.length} file(s) selected
+                                    </p>
                             {/* Selected Files */}
                             <div className="mt-4">
                                 {files.length === 0 ? (

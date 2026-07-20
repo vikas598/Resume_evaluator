@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 
 import api from "../services/api";
 
 function Register() {
+    const navigate = useNavigate();
     const[name, setName]= useState("");
     const[mail, setMail]= useState("");
     const[password, setPassword]= useState("");
@@ -20,6 +22,7 @@ function Register() {
         });
 
         console.log(response.data);
+        navigate('/login');
     } catch (error) {
     console.log(error);
 }
@@ -101,7 +104,7 @@ function Register() {
                     Login
                 </Link>
             </p>
-            
+
             </div>
             
             
