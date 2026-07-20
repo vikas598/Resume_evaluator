@@ -1,4 +1,5 @@
 import {useNavigate} from "react-router-dom";
+import Navbar from "../components/Navbar";
 
 function Result(){
     const navigate = useNavigate();
@@ -8,6 +9,8 @@ function Result(){
     );
     return (
     <div>
+        <Navbar></Navbar>
+        <div>
         {results.map((result, index) => (
             <div key={index}>
                 <h2>{result.name}</h2>
@@ -28,6 +31,7 @@ function Result(){
                 <p>{result.detail.final_verdict}</p>
             </div>
         ))}
+    </div>
     </div>
 );
 }

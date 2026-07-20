@@ -1,5 +1,6 @@
 import { useState } from "react";
 import {useNavigate} from "react-router-dom";
+import Navbar from "../components/Navbar";
 
 import api from "../services/api";
 
@@ -50,6 +51,8 @@ function UploadResume() {
 
     return (
         <div>
+            <Navbar></Navbar>
+            <div>
             <h1>Upload Resume Page</h1>
 
             <form onSubmit={handleSubmit}>
@@ -68,6 +71,7 @@ function UploadResume() {
                     Upload Resume
                 </button>
             </form>
+        </div>
         </div>
     );
 }

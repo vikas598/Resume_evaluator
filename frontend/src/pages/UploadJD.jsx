@@ -1,72 +1,117 @@
 import { useState } from "react";
-import {useNavigate} from "react-router-dom";
-
+import { useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
 import api from "../services/api";
 
 function UploadJD() {
-    const[file, setFile] = useState(null);
-    const navigate= useNavigate()
+    const [file, setFile] = useState(null);
+    const [loading, setLoading] = useState(false);
+
+    const navigate = useNavigate();
+
     const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0];
+        const selectedFile = e.target.files[0];
         setFile(selectedFile);
-        console.log(selectedFile);
-};  
+    };
+
     const handleSubmit = async (e) => {
-    e.preventDefault();
+        e.preventDefault();
 
-    if (!file) {
-        alert("Please select a JD file.");
-        return;
-    }
+        if (!file) {
+            alert("Please select a JD file.");
+            return;
+        }
 
-    try {
-        const token = localStorage.getItem("token");
+        try {
+            setLoading(true);
 
-        const formData = new FormData();
-        formData.append("file", file);
+            const token = localStorage.getItem("token");
 
-        const response = await api.post(
-            "/upload/jd",
-            formData,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            }
-        );
-        navigate('/upload-resume');
-    } catch (error) {
-        console.log(error.response.data);
-    }
-};
-    
+            const formData = new FormData();
+            formData.append("file", file);
 
-    return (
-        <div>
-            <h1>UploadJD Page</h1>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label>Upload JD</label>
-                <input type="file" 
-            onChange={handleFileChange}
-            />
-                </div>
-            <div>
-                <button
-    type="submit"
-    style={{
-        background: "red",
-        color: "white",
-        padding: "10px",
-        marginTop: "20px",
-    }}
->
-    Upload
-</button>
+            await api.post(
+                "/upload/jd",
+                formData,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            navigate("/upload-resume");
+        } catch (error) {
+            console.log(error.response?.data || error.message);
+            alert("Failed to upload JD.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+   return (
+    <div>
+        <Navbar />
+
+        <div className="min-h-screen bg-slate-100 flex justify-center items-center">
+            <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-lg">
+
+                <h1 className="text-3xl font-bold text-center text-blue-600">
+                    Upload Job Description
+                </h1>
+
+                <p className="text-center text-gray-500 mt-2 mb-8">
+                    Upload a PDF/DOCX containing the job description.
+                </p>
+
+                <form onSubmit={handleSubmit}>
+
+                    <div className="mb-6">
+                        <label className="block text-sm font-medium mb-3">
+                            Upload Job Description
+                        </label>
+
+                        {/* Hidden File Input */}
+                        <input
+                            id="jd-upload"
+                            type="file"
+                            accept=".pdf,.docx"
+                            onChange={handleFileChange}
+                            className="hidden"
+                        />
+
+                        {/* Custom File Button */}
+                        <label
+                            htmlFor="jd-upload"
+                            className="inline-block cursor-pointer bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg transition"
+                        >
+                            {file ? "Change File" : "Select File"}
+                        </label>
+
+                        {/* Selected File Name */}
+                        <p className="text-sm text-gray-500 mt-3">
+                            {file ? file.name : "No file selected"}
+                        </p>
+                    </div>
+
+                    <button
+                        type="submit"
+                        disabled={loading}
+                        className={`w-full py-2 rounded-lg text-white font-medium transition ${
+                            loading
+                                ? "bg-gray-400 cursor-not-allowed"
+                                : "bg-blue-600 hover:bg-blue-700"
+                        }`}
+                    >
+                        {loading ? "Uploading..." : "Upload JD"}
+                    </button>
+
+                </form>
+
             </div>
-            </form>
         </div>
-    );
-    }
+    </div>
+);
+}
 
 export default UploadJD;
