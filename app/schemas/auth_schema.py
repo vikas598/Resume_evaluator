@@ -6,7 +6,6 @@ class RegisterUser(BaseModel):
     name: str
     mail: str
     password: str
-    role: str
 
 class UserRegisterOut(BaseModel):
     id: int
