@@ -27,6 +27,8 @@ class Thread(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     parsed_resume: Mapped[dict] = mapped_column(JSONB, nullable=True)
     parsed_jd: Mapped[dict] = mapped_column(JSONB, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), nullable=False)
+
 
     user= relationship("User",back_populates= "threads")
 
@@ -39,5 +41,6 @@ class Evaluation(Base):
     thread_id : Mapped[str] = mapped_column(ForeignKey("thread.thread_id"), unique=True, nullable=False)
     result : Mapped[dict] = mapped_column(JSONB, nullable=False)
     convo : Mapped[dict] = mapped_column(JSONB, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), nullable=False)
 
     threads = relationship("Thread", back_populates="evaluation")

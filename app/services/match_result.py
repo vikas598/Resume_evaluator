@@ -119,10 +119,10 @@ INPUT
 --------------------------------
 
 JOB DESCRIPTION:
-{jobd.model_dump_json(indent=2)}
+{jobd}
 
 CANDIDATE RESUME:
-{resume.model_dump_json(indent=2)}
+{resume}
 
 --------------------------------
 OUTPUT
