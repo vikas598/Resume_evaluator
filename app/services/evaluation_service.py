@@ -48,6 +48,9 @@ def upload_resume_service(files: list[UploadFile], db:Session, current_user:User
         db.commit()
         db.refresh(thread)
         result = score_generator(thread.parsed_jd , resume)
+        thread.result = result.model_dump()
+        db.commit()
+        db.refresh(thread)
         all_results.append(
             {   
                 "thread_id": thread.thread_id,
