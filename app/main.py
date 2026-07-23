@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.database import Base, engine
 from app import models
-from app.routes import upload,auth,user
+from app.routes import upload,auth,user,chat
 
 Base.metadata.create_all(bind=engine)
 
@@ -24,6 +24,7 @@ app.add_middleware(
 app.include_router(upload.router)
 app.include_router(auth.router)
 app.include_router(user.router)
+app.include_router(chat.router)
 
 @app.get("/")
 def root():
