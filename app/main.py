@@ -1,15 +1,33 @@
 from fastapi import FastAPI
 from groq import Groq 
 from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
+from fastapi import FastAPI
 
+from langgraph.checkpoint.postgres import PostgresSaver
+
+from app.services.chat_service import agent
+from app.config import settings
 from app.config import settings
 from app.database import Base, engine
 from app import models
 from app.routes import upload,auth,user,chat
 
+DB_URI = f'postgresql://{settings.DATABASE_USERNAME}:{settings.DATABASE_PASSWORD}@{settings.DATABASE_HOSTNAME}:{settings.DATABASE_PORT}/{settings.DATABASE_NAME}'
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    cm = PostgresSaver.from_conn_string(DB_URI)
+
+    agent.checkpointer = cm.__enter__()
+    agent.checkpointer.setup()
+    yield
+
+    cm.__exit__(None, None, None)
+
 Base.metadata.create_all(bind=engine)
 
-app=FastAPI()
+app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
