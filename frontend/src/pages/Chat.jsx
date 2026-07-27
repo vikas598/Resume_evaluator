@@ -1,6 +1,8 @@
 import { useState } from "react";
 import Navbar from "../components/Navbar";
 import api from "../services/api";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 function Chat() {
     const [messages, setMessages] = useState([]);
@@ -125,7 +127,7 @@ function Chat() {
                                         : "bg-white shadow text-gray-800"
                                 }`}
                             >
-                                {msg.content}
+                                <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.content}</ReactMarkdown>
                             </div>
                         </div>
                     ))}

@@ -6,6 +6,7 @@ import os
 from dotenv import load_dotenv
 
 from app.models import Thread
+from app.services.chat_service.prompt import master_prompt
 
 load_dotenv()
 os.environ["GROQ_API_KEY"]=os.getenv("GROQ_API_KEY")
@@ -39,7 +40,7 @@ def agent(thread_id:str, db:Session):
         model= model,
         tools=[get_jd, get_resume,get_score],
         checkpointer= checkpointer,
-        system_prompt="Be concise and accurate"
+        system_prompt= master_prompt
     )
 
     return get_chat_agent
