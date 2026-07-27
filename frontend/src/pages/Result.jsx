@@ -14,7 +14,7 @@ function Result() {
         <div>
             <Navbar />
 
-            <div className="min-h-screen bg-slate-100 py-10 px-6">
+            <div className="min-h-screen bg-slate-100 pt-28 pb-10 px-6">
 
                 <h1 className="text-4xl font-bold text-center text-blue-600 mb-10">
                     Resume Evaluation Results

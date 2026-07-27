@@ -57,7 +57,7 @@ function UploadJD() {
     <div>
         <Navbar />
 
-        <div className="min-h-screen bg-slate-100 flex justify-center items-center">
+        <div className="min-h-screen bg-slate-100 flex justify-center items-center pt-20">
             <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-lg">
 
                 <h1 className="text-3xl font-bold text-center text-blue-600">
