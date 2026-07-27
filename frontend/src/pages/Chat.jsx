@@ -208,13 +208,9 @@ function Chat() {
                         >
 
                         <div className="prose max-w-none prose-slate">
-
-                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
-
-                        {msg.content}
-
-                        </ReactMarkdown>
-
+                        <div className="prose max-w-none">
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.content}</ReactMarkdown>
+                        </div>
                         </div>
 
                         </div>
