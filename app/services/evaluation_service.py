@@ -33,8 +33,11 @@ def upload_jd_service(file: UploadFile, db:Session, current_user:User):
         "message": "Job Description uploaded successfully."
     }
 
-def upload_resume_service(files: list[UploadFile], db:Session, current_user:User):
-    thread = db.query(Thread).filter(Thread.user_id == current_user.id).order_by(Thread.created_at.desc()).first()
+def upload_resume_service(thread_id: str ,files: list[UploadFile], db:Session, current_user:User):
+    thread = db.query(Thread).filter(Thread.thread_id == thread_id, Thread.user_id == current_user.id).first()
+    if thread is None:
+            raise HTTPException(status_code=404, detail="Thread not found")
+
     if thread.parsed_jd is None:
         raise HTTPException(status_code=400, detail="Please upload a Job Description first.")
 

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, UploadFile, File, Depends, HTTPException, status
+from fastapi import APIRouter, UploadFile, File, Depends, HTTPException, status, Form
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -21,8 +21,8 @@ async def upload_jd(file: UploadFile = File(...), current_user: models.User= Dep
 
 
 @router.post("/resume")
-async def upload_resume(files: list[UploadFile] = File(...),  current_user: models.User = Depends(oauth2.get_current_user),db: Session = Depends(get_db)):
+async def upload_resume(thread_id: str = Form(...),files: list[UploadFile] = File(...),  current_user: models.User = Depends(oauth2.get_current_user),db: Session = Depends(get_db)):
     try:
-        return upload_resume_service(files, db, current_user)
+        return upload_resume_service(thread_id, files, db, current_user)
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))

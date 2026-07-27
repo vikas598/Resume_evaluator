@@ -5,6 +5,7 @@ import Login from "./pages/Login";
 import UploadResume from "./pages/UploadResume";
 import UploadJD from "./pages/UploadJD";
 import Result from "./pages/Result";
+import Chat from "./pages/Chat";
 
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
                 <Route path="/upload-resume" element={<UploadResume />} />
                 <Route path="/upload-jd" element={<UploadJD />} />
                 <Route path="/result" element={<Result />} />
+                <Route path="/chat" element={<Chat />} />
             </Routes>
         </BrowserRouter>
     );

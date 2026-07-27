@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends, status
+from fastapi import APIRouter, HTTPException, Depends, status, Form
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -10,7 +10,7 @@ router = APIRouter(tags=["Chat"])
 @router.post("/chat",response_model=chat_schema.ChatResponse)
 async def chat( request: chat_schema.ChatRequest ,db: Session= Depends(get_db), current_user: models.User = Depends(oauth2.get_current_user) ):
     try:
-        thread = db.query(models.Thread).filter( models.Thread.user_id == current_user.id).first()
+        thread = db.query(models.Thread).filter(models.Thread.thread_id == request.thread_id, models.Thread.user_id == current_user.id).first()
 
         if thread is None:
             raise HTTPException(

@@ -6,9 +6,7 @@ import api from "../services/api";
 function UploadResume() {
     const [files, setFiles] = useState([]);
     const [loading, setLoading] = useState(false);
-
     const navigate = useNavigate();
-
     const handleFileChange = (e) => {
         const selectedFiles = Array.from(e.target.files);
         setFiles(selectedFiles);
@@ -24,15 +22,13 @@ function UploadResume() {
 
         try {
             setLoading(true);
-
             const token = localStorage.getItem("token");
-
+            const threadId = localStorage.getItem("thread_id");
             const formData = new FormData();
-
+            formData.append("thread_id", threadId);
             files.forEach((file) => {
                 formData.append("files", file);
             });
-
             const response = await api.post(
                 "/upload/resume",
                 formData,

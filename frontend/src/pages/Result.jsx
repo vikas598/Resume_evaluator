@@ -1,8 +1,9 @@
 import Navbar from "../components/Navbar";
+import { useNavigate } from "react-router-dom";
 
 function Result() {
     const results = JSON.parse(localStorage.getItem("results")) || [];
-
+    const navigate = useNavigate();
     const getScoreColor = (score) => {
         if (score >= 80) return "bg-green-100 text-green-700";
         if (score >= 60) return "bg-yellow-100 text-yellow-700";
@@ -77,6 +78,12 @@ function Result() {
                                     <p className="text-gray-700 leading-relaxed">
                                         {result.detail.final_verdict}
                                     </p>
+                                    <button
+                                        onClick={() => navigate("/chat")}
+                                        className="mt-6 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg transition"
+                                    >
+                                        Chat with AI
+                                    </button>
                                 </div>
 
                             </div>

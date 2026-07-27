@@ -30,7 +30,7 @@ function UploadJD() {
             const formData = new FormData();
             formData.append("file", file);
 
-            await api.post(
+            const response = await api.post(
                 "/upload/jd",
                 formData,
                 {
@@ -40,9 +40,13 @@ function UploadJD() {
                 }
             );
 
+            localStorage.setItem("thread_id", response.data.thread_id);
             navigate("/upload-resume");
         } catch (error) {
-            console.log(error.response?.data || error.message);
+            console.log(error);
+            console.log(error.response);
+            console.log(error.response?.status);
+            console.log(error.response?.data);
             alert("Failed to upload JD.");
         } finally {
             setLoading(false);
