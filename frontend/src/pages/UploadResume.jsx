@@ -4,42 +4,45 @@ import Navbar from "../components/Navbar";
 import api from "../services/api";
 
 function UploadResume() {
-  const [files, setFiles] = useState([]);
+  const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
+
   const handleFileChange = (e) => {
-    const selectedFiles = Array.from(e.target.files);
-    setFiles(selectedFiles);
+    setFile(e.target.files[0]);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (files.length === 0) {
-      alert("Please select at least one resume.");
+    if (!file) {
+      alert("Please select a resume.");
       return;
     }
 
     try {
       setLoading(true);
+
       const token = localStorage.getItem("token");
       const threadId = localStorage.getItem("thread_id");
+
       const formData = new FormData();
       formData.append("thread_id", threadId);
-      files.forEach((file) => {
-        formData.append("files", file);
-      });
+      formData.append("file", file);
+
       const response = await api.post("/upload/resume", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
-      localStorage.setItem("results", JSON.stringify(response.data));
+      localStorage.setItem("result", JSON.stringify(response.data));
+      localStorage.removeItem("results");
       navigate("/result");
     } catch (error) {
       console.log(error.response?.data || error.message);
-      alert("Failed to upload resumes.");
+      alert("Failed to upload resume.");
     } finally {
       setLoading(false);
     }
@@ -52,24 +55,23 @@ function UploadResume() {
       <div className="min-h-screen bg-paper flex justify-center items-center pt-20">
         <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-lg">
           <h1 className="text-3xl font-bold text-center text-evaluate">
-            Upload Resume(s)
+            Upload Resume
           </h1>
 
           <p className="text-center text-gray-500 mt-2 mb-8">
-            Upload one or more PDF/DOCX resumes for evaluation.
+            Upload your resume in PDF or DOCX format.
           </p>
 
           <form onSubmit={handleSubmit}>
             <div className="mb-6">
               <label className="block text-sm font-medium mb-3">
-                Upload Resume(s)
+                Upload Resume
               </label>
 
               {/* Hidden File Input */}
               <input
                 id="resume-upload"
                 type="file"
-                multiple
                 accept=".pdf,.docx"
                 onChange={handleFileChange}
                 className="hidden"
@@ -80,21 +82,14 @@ function UploadResume() {
                 htmlFor="resume-upload"
                 className="inline-block cursor-pointer bg-evaluate hover:bg-evaluate text-white px-5 py-2 rounded-lg transition"
               >
-                {files.length > 0 ? "Change Files" : "Select Resume(s)"}
+                {file ? "Change File" : "Select Resume"}
               </label>
-              <p className="text-sm font-medium text-gray-700 mb-2">
-                {files.length} file(s) selected
-              </p>
-              {/* Selected Files */}
+
               <div className="mt-4">
-                {files.length === 0 ? (
-                  <p className="text-sm text-gray-500">No files selected</p>
+                {file ? (
+                  <p className="text-sm text-gray-600">{file.name}</p>
                 ) : (
-                  <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
-                    {files.map((file, index) => (
-                      <li key={index}>{file.name}</li>
-                    ))}
-                  </ul>
+                  <p className="text-sm text-gray-500">No file selected</p>
                 )}
               </div>
             </div>
@@ -108,7 +103,7 @@ function UploadResume() {
                   : "bg-evaluate hover:bg-evaluate"
               }`}
             >
-              {loading ? "Evaluating..." : "Evaluate Resume(s)"}
+              {loading ? "Evaluating..." : "Evaluate Resume"}
             </button>
           </form>
         </div>

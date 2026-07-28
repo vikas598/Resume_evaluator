@@ -28,6 +28,12 @@ class Resume(BaseModel):
     certifications: list[str] = Field(default_factory=list)
 
 
+class EvaluationDetail(BaseModel):
+    matching_skills: list[str] = Field(default_factory=list)
+    missing_important_skills: list[str] = Field(default_factory=list)
+    final_verdict: str = ""
+
+
 class Result(BaseModel):
     score: float
-    detail: dict
+    detail: EvaluationDetail

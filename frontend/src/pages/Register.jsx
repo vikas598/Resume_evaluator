@@ -17,8 +17,8 @@ function Register() {
         const response = await api.post("/register",{
             name,
             mail,
-            password,
-            role    
+            password
+            
         });
 
         console.log(response.data);
@@ -73,20 +73,7 @@ function Register() {
                     />
                 </div>
 
-                <div className="mb-6">
-                    <label className="block text-sm font-medium mb-2">
-                        Role</label>
-                    <select
-                        value={role}
-                        onChange={(e) => setRole(e.target.value)}
-                        className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-evaluate"
-                    >
-                        <option value="">Select Role</option>
-                        <option value="candidate">Candidate</option>
-                        <option value="hr">HR</option>
-                    </select>
-                </div>
-
+                
                 <button type="submit"  className="w-full bg-evaluate hover:bg-evaluate text-white py-2 rounded-lg transition">
                     Register
                 </button>

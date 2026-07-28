@@ -27,7 +27,7 @@ class Thread(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     parsed_resume: Mapped[dict] = mapped_column(JSONB, nullable=True)
     parsed_jd: Mapped[dict] = mapped_column(JSONB, nullable=True)
-    result : Mapped[dict] = mapped_column(JSONB)
+    result : Mapped[dict] = mapped_column(JSONB, nullable=True)
 
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), nullable=False)
 

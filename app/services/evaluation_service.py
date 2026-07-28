@@ -33,44 +33,52 @@ def upload_jd_service(file: UploadFile, db:Session, current_user:User):
         "message": "Job Description uploaded successfully."
     }
 
-def upload_resume_service(thread_id: str ,files: list[UploadFile], db:Session, current_user:User):
-    thread = db.query(Thread).filter(Thread.thread_id == thread_id, Thread.user_id == current_user.id).first()
-    if thread is None:
-            raise HTTPException(status_code=404, detail="Thread not found")
-
-    if thread.parsed_jd is None:
-        raise HTTPException(status_code=400, detail="Please upload a Job Description first.")
-
-    all_results = []
-    for file in files:
-        raw_resume = file_extractor(file)
-        if not raw_resume:
-            continue
-        resume = resume_parser(raw_resume)
-        thread.parsed_resume = resume.model_dump()
-        db.commit()
-        db.refresh(thread)
-        result = score_generator(thread.parsed_jd , resume)
-        thread.result = result.model_dump()
-        db.commit()
-        db.refresh(thread)
-        all_results.append(
-            {   
-                "thread_id": thread.thread_id,
-                "name": resume.name or file.filename,
-                "score": result.score,
-                "detail": result.detail,
-            }
+def upload_resume_service(
+    thread_id: str,
+    file: UploadFile,
+    db: Session,
+    current_user: User,
+):
+    thread = (
+        db.query(Thread)
+        .filter(
+            Thread.thread_id == thread_id,
+            Thread.user_id == current_user.id,
         )
-        # Prevent hitting the LLM rate limit
-        time.sleep(5)
-
-    if not all_results:
-        raise HTTPException(status_code=400, detail="No valid resumes found.")
-
-    all_results.sort(
-        key=lambda candidate: candidate["score"],
-        reverse=True,
+        .first()
     )
 
-    return all_results
+    if thread is None:
+        raise HTTPException(status_code=404, detail="Thread not found")
+
+    if thread.parsed_jd is None:
+        raise HTTPException(
+            status_code=400,
+            detail="Please upload a Job Description first.",
+        )
+    raw_resume = file_extractor(file)
+    if not raw_resume:
+        raise HTTPException(
+            status_code=400,
+            detail="Failed to extract text from the resume.",
+        )
+
+    resume = resume_parser(raw_resume)
+    thread.parsed_resume = resume.model_dump()
+    db.commit()
+    db.refresh(thread)
+    result = score_generator(thread.parsed_jd, resume)
+    thread.result = result.model_dump()
+    db.commit()
+    db.refresh(thread)
+    return {
+        "thread_id": thread.thread_id,
+        "name": resume.name or file.filename,
+        "score": result.score,
+        "detail": result.detail,
+    }
+
+    
+    
+
+    
