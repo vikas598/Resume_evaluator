@@ -13,22 +13,26 @@ function Login() {
         try{
             const formData = new URLSearchParams();
 
-            formData.append("username", mail);
+            formData.append("username", mail.trim());
             formData.append("password", password);
 
-            const response = await api.post("/login", formData);
+            const response = await api.post("/login", formData, {
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                }
+            });
 
             localStorage.setItem("token", response.data.access_token);
             navigate('/upload-jd');
         }
         catch(error){
-            console.log(error.response.data);
+            console.log(error.response?.data || error.message);
         }
     }
     return (
-        <div className="min-h-screen bg-zinc-100 flex items-center justify-center">
+        <div className="min-h-screen bg-paper flex items-center justify-center">
             <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md">
-                <h1 className="text-3xl font-bold text-center text-blue-600">
+                <h1 className="text-3xl font-bold text-center text-evaluate">
                         Resume Evaluator
                     </h1>
 
@@ -45,7 +49,7 @@ function Login() {
                     value={mail}
                     onChange={(e)=> setMail(e.target.value)}
                     type="email" 
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-evaluate"
                     />
                 </div>
                 <div>
@@ -54,12 +58,12 @@ function Login() {
                     value={password}
                     onChange={(e)=>setPassword(e.target.value)}
                     type="Password"
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-evaluate"
                     />
                 </div>
 
                 <div>
-                    <button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg transition">
+                    <button type="submit" className="w-full bg-evaluate hover:bg-evaluate text-white py-2 rounded-lg transition">
                     Login
                     </button>
                 </div>
@@ -71,7 +75,7 @@ function Login() {
             <p className="text-center">
                 <a
                     href="/register"
-                    className="text-blue-600 hover:underline"
+                    className="text-evaluate hover:underline"
                 >
                     Register
                 </a>

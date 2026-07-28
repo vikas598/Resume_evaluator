@@ -101,7 +101,7 @@ function Chat() {
     <div>
       <Navbar />
 
-      <div className="h-screen bg-slate-100 flex flex-col pt-20">
+      <div className="h-screen bg-paper flex flex-col pt-20">
         {/* Chat Messages */}
         <div
           ref={messagesContainerRef}
@@ -113,7 +113,7 @@ function Chat() {
               <div className="text-center mt-16">
                 <div className="text-7xl mb-4">🤖</div>
 
-                <h1 className="text-5xl font-bold text-blue-600">
+                <h1 className="text-5xl font-bold text-evaluate">
                   AI Resume Assistant
                 </h1>
 
@@ -154,7 +154,7 @@ function Chat() {
               >
                 <div className="flex items-start gap-3 max-w-3xl">
                   {msg.role === "assistant" && (
-                    <div className="text-blue-600 text-3xl mt-1">
+                    <div className="text-evaluate text-3xl mt-1">
                       <FaRobot />
                     </div>
                   )}
@@ -162,11 +162,17 @@ function Chat() {
                   <div
                     className={`rounded-2xl px-5 py-4 shadow-md ${
                       msg.role === "assistant"
-                        ? "bg-white text-gray-800"
-                        : "bg-blue-600 text-white"
+                        ? "bg-white text-ink"
+                        : "bg-evaluate text-white"
                     }`}
                   >
-                    <div className="prose max-w-none prose-slate">
+                    <div
+                      className={`prose max-w-none ${
+                        msg.role === "user"
+                          ? "prose-invert [&_a]:text-white [&_strong]:text-white [&_em]:text-white [&_p]:text-white [&_li]:text-white [&_ul]:text-white [&_ol]:text-white [&_blockquote]:text-white [&_code]:text-white"
+                          : "prose-slate"
+                      }`}
+                    >
                       <div className="prose max-w-none">
                         <ReactMarkdown remarkPlugins={[remarkGfm]}>
                           {msg.content}
@@ -176,7 +182,7 @@ function Chat() {
                   </div>
 
                   {msg.role === "user" && (
-                    <div className="text-blue-600 text-3xl mt-1">
+                    <div className="text-evaluate text-3xl mt-1">
                       <FaUserCircle />
                     </div>
                   )}
@@ -188,7 +194,7 @@ function Chat() {
               <div className="flex justify-start mb-4">
                 <div className="bg-white shadow rounded-xl px-4 py-3 text-gray-500">
                   <div className="flex items-center gap-3">
-                    <div className="text-blue-600 text-3xl">
+                    <div className="text-evaluate text-3xl">
                       <FaRobot />
                     </div>
                     <div className="bg-white rounded-2xl shadow-md px-5 py-4">
@@ -214,7 +220,7 @@ function Chat() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask anything about your resume..."
-              className="flex-1 rounded-full border px-6 py-4 focus:ring-2 focus:ring-blue-500 outline-none"
+              className="flex-1 rounded-full border px-6 py-4 focus:ring-2 focus:ring-evaluate outline-none"
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !loading) {
                   handleSend();
@@ -224,7 +230,7 @@ function Chat() {
             <button
               onClick={handleSend}
               disabled={loading}
-              className="w-14 h-14 rounded-full bg-blue-600 text-white flex justify-center items-center hover:bg-blue-700 transition"
+              className="w-14 h-14 rounded-full bg-evaluate text-white flex justify-center items-center hover:bg-evaluate transition"
             >
               <FaPaperPlane />
             </button>

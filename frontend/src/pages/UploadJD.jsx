@@ -53,9 +53,9 @@ function UploadJD() {
     <div>
       <Navbar />
 
-      <div className="min-h-screen bg-slate-100 flex justify-center items-center pt-20">
+      <div className="min-h-screen bg-paper flex justify-center items-center pt-20">
         <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-lg">
-          <h1 className="text-3xl font-bold text-center text-blue-600">
+          <h1 className="text-3xl font-bold text-center text-evaluate">
             Upload Job Description
           </h1>
 
@@ -81,7 +81,7 @@ function UploadJD() {
               {/* Custom File Button */}
               <label
                 htmlFor="jd-upload"
-                className="inline-block cursor-pointer bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg transition"
+                className="inline-block cursor-pointer bg-evaluate hover:bg-evaluate text-white px-5 py-2 rounded-lg transition"
               >
                 {file ? "Change File" : "Select File"}
               </label>
@@ -98,7 +98,7 @@ function UploadJD() {
               className={`w-full py-2 rounded-lg text-white font-medium transition ${
                 loading
                   ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-blue-600 hover:bg-blue-700"
+                  : "bg-evaluate hover:bg-evaluate"
               }`}
             >
               {loading ? "Uploading..." : "Upload JD"}

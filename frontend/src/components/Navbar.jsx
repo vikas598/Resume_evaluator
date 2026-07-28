@@ -40,24 +40,24 @@ function Navbar() {
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-blue-600">Resume Evaluator</h1>
+        <h1 className="text-2xl font-bold text-evaluate">Resume Evaluator</h1>
 
         <div className="flex gap-6 items-center">
-          <Link to="/upload-jd" className="hover:text-blue-600">
+          <Link to="/upload-jd" className="hover:text-evaluate">
             Upload JD
           </Link>
 
-          <Link to="/upload-resume" className="hover:text-blue-600">
+          <Link to="/upload-resume" className="hover:text-evaluate">
             Upload Resume
           </Link>
 
-          <Link to="/result" className="hover:text-blue-600">
+          <Link to="/result" className="hover:text-evaluate">
             Results
           </Link>
 
           <button
             onClick={handleLogout}
-            className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
+            className="bg-flag text-white px-4 py-2 rounded-lg hover:bg-flag"
           >
             Logout
           </button>

@@ -5,17 +5,17 @@ function Result() {
   const results = JSON.parse(localStorage.getItem("results")) || [];
   const navigate = useNavigate();
   const getScoreColor = (score) => {
-    if (score >= 80) return "bg-green-100 text-green-700";
-    if (score >= 60) return "bg-yellow-100 text-yellow-700";
-    return "bg-red-100 text-red-700";
+    if (score >= 80) return "bg-match/10 text-match";
+    if (score >= 60) return "bg-gap/10 text-gap";
+    return "bg-gap/10 text-gap";
   };
 
   return (
     <div>
       <Navbar />
 
-      <div className="min-h-screen bg-slate-100 pt-28 pb-10 px-6">
-        <h1 className="text-4xl font-bold text-center text-blue-600 mb-10">
+      <div className="min-h-screen bg-paper pt-28 pb-10 px-6">
+        <h1 className="text-4xl font-bold text-center text-evaluate mb-10">
           Resume Evaluation Results
         </h1>
 
@@ -26,7 +26,7 @@ function Result() {
             {results.map((result, index) => (
               <div key={index} className="bg-white rounded-xl shadow-lg p-8">
                 <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-2xl font-bold text-gray-800">
+                  <h2 className="text-2xl font-bold text-ink">
                     {result.name}
                   </h2>
 
@@ -38,7 +38,7 @@ function Result() {
                 </div>
 
                 <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-green-600 mb-2">
+                  <h3 className="text-lg font-semibold text-match mb-2">
                     Matching Skills
                   </h3>
 
@@ -50,7 +50,7 @@ function Result() {
                 </div>
 
                 <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-red-600 mb-2">
+                  <h3 className="text-lg font-semibold text-gap mb-2">
                     Missing Important Skills
                   </h3>
 
@@ -64,7 +64,7 @@ function Result() {
                 </div>
 
                 <div>
-                  <h3 className="text-lg font-semibold text-blue-600 mb-2">
+                  <h3 className="text-lg font-semibold text-evaluate mb-2">
                     Final Verdict
                   </h3>
 
@@ -73,7 +73,7 @@ function Result() {
                   </p>
                   <button
                     onClick={() => navigate("/chat")}
-                    className="mt-6 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg transition"
+                    className="mt-6 bg-evaluate hover:bg-evaluate text-white px-5 py-2 rounded-lg transition"
                   >
                     Chat with AI
                   </button>

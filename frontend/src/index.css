@@ -1,2 +1,10 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
+@theme {
+  --color-ink: #1B231F;
+  --color-paper: #F3F2ED;
+  --color-evaluate: #1F5C55;
+  --color-match: #6B8E4E;
+  --color-gap: #C17A3E;
+  --color-flag: #9C4A42;
+}

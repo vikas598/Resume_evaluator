@@ -29,9 +29,9 @@ function Register() {
 
 };
     return (
-        <div className="min-h-screen bg-zinc-100 flex items-center justify-center">
+        <div className="min-h-screen bg-paper flex items-center justify-center">
             <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md">
-                <h1 className="text-3xl font-bold text-center text-blue-600">Resume Evaluator</h1>
+                <h1 className="text-3xl font-bold text-center text-evaluate">Resume Evaluator</h1>
                 <p className="text-center text-gray-500 mt-2 mb-8">
                     Create your account
                 </p>
@@ -43,7 +43,7 @@ function Register() {
                     <input
                         type="text"
                         value={name}
-                        className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-evaluate"
                         onChange={(e) => setName(e.target.value)}
                         placeholder="Enter your name"
                     />
@@ -54,7 +54,7 @@ function Register() {
                          Email</label>
                     <input 
                     value={mail}
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-evaluate"
                     onChange={(e) => setMail(e.target.value)}
                     type="email"
                     placeholder="Enter your email"
@@ -66,7 +66,7 @@ function Register() {
                         Password</label>
                     <input
                     type="password" 
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-evaluate"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Enter your password"
@@ -79,7 +79,7 @@ function Register() {
                     <select
                         value={role}
                         onChange={(e) => setRole(e.target.value)}
-                        className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-evaluate"
                     >
                         <option value="">Select Role</option>
                         <option value="candidate">Candidate</option>
@@ -87,7 +87,7 @@ function Register() {
                     </select>
                 </div>
 
-                <button type="submit"  className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg transition">
+                <button type="submit"  className="w-full bg-evaluate hover:bg-evaluate text-white py-2 rounded-lg transition">
                     Register
                 </button>
             </form>
@@ -99,7 +99,7 @@ function Register() {
             <p className="text-center">
                 <Link
                     to="/login"
-                    className="text-blue-600 hover:underline"
+                    className="text-evaluate hover:underline"
                 >
                     Login
                 </Link>
