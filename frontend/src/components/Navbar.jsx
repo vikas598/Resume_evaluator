@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { FaGithub } from "react-icons/fa";
 
 function Navbar() {
   const [showNavbar, setShowNavbar] = useState(true);
@@ -59,6 +60,16 @@ function Navbar() {
           <Link to="/result" className="hover:text-evaluate">
             Results
           </Link>
+
+          <a
+            href="https://github.com/vikas598/Resume_evaluator"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 border border-gray-300 px-4 py-2 rounded-lg hover:bg-gray-100 transition"
+          >
+            <FaGithub size={20} />
+            <span>GitHub</span>
+          </a>
 
           <button
             onClick={handleLogout}
