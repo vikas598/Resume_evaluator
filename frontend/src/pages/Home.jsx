@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import {
+  FaGithub,
   FaArrowRight,
   FaComments,
   FaFileAlt,
@@ -76,19 +77,34 @@ function Home() {
             ))}
           </div>
 
-          <div className="mt-10 flex flex-col justify-center gap-3 sm:flex-row">
-            <button
-              onClick={() => navigate("/login")}
-              className="rounded-xl bg-evaluate px-7 py-3.5 text-base font-semibold text-white shadow-sm transition hover:translate-y-[-1px] hover:opacity-90"
+          <div className="mt-10 flex flex-col items-center gap-4">
+            {/* First row */}
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <button
+                onClick={() => navigate("/login")}
+                className="rounded-xl bg-evaluate px-7 py-3.5 text-base font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:opacity-90"
+              >
+                Login
+              </button>
+
+              <button
+                onClick={() => navigate("/register")}
+                className="rounded-xl border border-evaluate px-7 py-3.5 text-base font-semibold text-evaluate transition hover:bg-evaluate hover:text-white"
+              >
+                Register
+              </button>
+            </div>
+
+            {/* Second row */}
+            <a
+              href="https://github.com/vikas598/Resume_evaluator"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-xl border border-gray-300 px-6 py-3 text-base font-semibold text-gray-700 shadow-sm transition hover:-translate-y-0.5 hover:bg-gray-100"
             >
-              Login
-            </button>
-            <button
-              onClick={() => navigate("/register")}
-              className="rounded-xl border border-evaluate px-7 py-3.5 text-base font-semibold text-evaluate transition hover:bg-evaluate hover:text-white"
-            >
-              Register
-            </button>
+              <FaGithub size={20} />
+              View on GitHub
+            </a>
           </div>
         </div>
       </div>
