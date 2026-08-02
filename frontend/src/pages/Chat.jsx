@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import Navbar from "../components/Navbar";
 import api from "../services/api";
+import Layout from "../components/Layout";
 
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -98,8 +99,7 @@ function Chat() {
   };
 
   return (
-    <div>
-      <Navbar />
+    <Layout>
 
       <div className="h-screen bg-paper flex flex-col pt-20">
         {/* Chat Messages */}
@@ -237,7 +237,7 @@ function Chat() {
           </div>
         </div>
       </div>
-    </div>
+    </Layout>
   );
 }
 

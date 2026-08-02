@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { FaGithub } from "react-icons/fa";
 
-function Navbar() {
+function Navbar({ onOpenChats }) {
   const [showNavbar, setShowNavbar] = useState(true);
   useEffect(() => {
     let lastScrollY = window.scrollY;
@@ -60,6 +60,13 @@ function Navbar() {
           <Link to="/result" className="hover:text-evaluate">
             Results
           </Link>
+
+          <button
+            onClick={onOpenChats}
+            className="hover:text-evaluate"
+          >
+            Chats
+          </button>
 
           <a
             href="https://github.com/vikas598/Resume_evaluator"

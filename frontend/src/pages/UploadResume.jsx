@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import api from "../services/api";
+import Layout from "../components/Layout";
 
 function UploadResume() {
   const [file, setFile] = useState(null);
@@ -49,8 +50,7 @@ function UploadResume() {
   };
 
   return (
-    <div>
-      <Navbar />
+    <Layout>
 
       <div className="min-h-screen bg-paper flex justify-center items-center pt-20">
         <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-lg">
@@ -108,7 +108,7 @@ function UploadResume() {
           </form>
         </div>
       </div>
-    </div>
+    </Layout>
   );
 }
 

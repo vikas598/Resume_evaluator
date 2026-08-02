@@ -1,5 +1,6 @@
 import Navbar from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
+import Layout from "../components/Layout";
 
 function Result() {
   const evaluation = JSON.parse(localStorage.getItem("result"));
@@ -16,8 +17,7 @@ function Result() {
   const finalVerdict = detail.final_verdict || "No verdict available.";
 
   return (
-    <div>
-      <Navbar />
+    <Layout>
 
       <div className="min-h-screen bg-paper pt-28 pb-10 px-6">
         <h1 className="text-4xl font-bold text-center text-evaluate mb-10">
@@ -82,7 +82,7 @@ function Result() {
           </div>
         )}
       </div>
-    </div>
+    </Layout>
   );
 }
 

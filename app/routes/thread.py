@@ -11,7 +11,7 @@ from app.services.chat_history import get_chat_history
 
 router = APIRouter(tags=['thread'])
 
-@router.get("/threads", response_model=List[Thread])
+@router.get("/threads", response_model=List[Thread],status_code=status.HTTP_200_OK)
 def get_threads(db: Session= Depends(get_db), current_user: models.User = Depends(oauth2.get_current_user) ):
     try:
         thread = db.query(models.Thread).filter(models.Thread.user_id == current_user.id).order_by(models.Thread.updated_at.desc()).all()
@@ -26,7 +26,7 @@ def get_threads(db: Session= Depends(get_db), current_user: models.User = Depend
     except SQLAlchemyError:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Database error while fetching threads.")
 
-@router.get("/threads/{thread_id}", response_model=ThreadDetail, status_code=status.HTTP_302_FOUND)
+@router.get("/threads/{thread_id}", response_model=ThreadDetail, status_code=status.HTTP_200_OK)
 def get_thread(thread_id: str ,db: Session= Depends(get_db), current_user: models.User = Depends(oauth2.get_current_user) ):
     try:
         thread = db.query(models.Thread).filter(models.Thread.thread_id == thread_id, models.Thread.user_id == current_user.id).first()
