@@ -22,3 +22,6 @@ class ThreadDetail(BaseModel):
     result: dict[str, Any]
 
     history: List[ChatMessage]
+
+class ThreadUpdate(BaseModel):
+    title: str
