@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import api from "../services/api";
 
 function ChatSidebar({ open, onClose }) {
+  const [menuOpen, setMenuOpen] = useState(null);
   const [threads, setThreads] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -36,6 +37,40 @@ function ChatSidebar({ open, onClose }) {
     }
   }, [open]);
 
+  useEffect(() => {
+    const closeMenu = () => setMenuOpen(null);
+
+    window.addEventListener("click", closeMenu);
+
+    return () => {
+      window.removeEventListener("click", closeMenu);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleThreadUpdate = () => {
+      fetchThreads();
+    };
+
+    window.addEventListener("threadUpdated", handleThreadUpdate);
+
+    return () => {
+      window.removeEventListener("threadUpdated", handleThreadUpdate);
+    };
+  }, []);
+
+  useEffect(() => {
+    const refreshThreads = () => {
+      fetchThreads();
+    };
+
+    window.addEventListener("threadUpdated", refreshThreads);
+
+    return () => {
+      window.removeEventListener("threadUpdated", refreshThreads);
+    };
+  }, []);
+
   const openThread = (threadId) => {
     onClose();
     navigate(`/chat/${threadId}`);
@@ -63,9 +98,7 @@ function ChatSidebar({ open, onClose }) {
             transition={{ duration: 0.25 }}
           >
             <div className="p-5 border-b">
-              <h2 className="text-2xl font-bold text-evaluate">
-                Chats
-              </h2>
+              <h2 className="text-2xl font-bold text-evaluate">Chats</h2>
             </div>
 
             <div className="flex-1 overflow-y-auto p-4">
@@ -75,15 +108,43 @@ function ChatSidebar({ open, onClose }) {
                 <p className="text-gray-500">No previous chats.</p>
               ) : (
                 threads.map((thread) => (
-                  <button
+                  <div
                     key={thread.thread_id}
-                    onClick={() => openThread(thread.thread_id)}
-                    className="w-full text-left px-3 py-3 rounded-lg hover:bg-gray-100 transition cursor-pointer"
+                    className="group relative flex items-center justify-between px-3 py-3 rounded-lg hover:bg-gray-100 transition"
                   >
-                    <p className="font-medium truncate">
-                      {thread.title}
-                    </p>
-                  </button>
+                    <button
+                      onClick={() => openThread(thread.thread_id)}
+                      className="flex-1 text-left truncate"
+                    >
+                      <p className="font-medium truncate">📝 {thread.title}</p>
+                    </button>
+
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setMenuOpen(
+                          menuOpen === thread.thread_id
+                            ? null
+                            : thread.thread_id,
+                        );
+                      }}
+                      className="opacity-0 group-hover:opacity-100 transition px-2 text-lg text-gray-500 hover:text-black"
+                    >
+                      ⋮
+                    </button>
+
+                    {menuOpen === thread.thread_id && (
+                      <div className="absolute right-2 top-11 w-36 bg-white border rounded-lg shadow-lg z-50">
+                        <button className="block w-full text-left px-4 py-2 hover:bg-gray-100">
+                          Rename
+                        </button>
+
+                        <button className="block w-full text-left px-4 py-2 text-red-600 hover:bg-red-50">
+                          Delete
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 ))
               )}
             </div>

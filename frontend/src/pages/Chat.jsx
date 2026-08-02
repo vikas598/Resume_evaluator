@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import api from "../services/api";
 import Layout from "../components/Layout";
@@ -17,7 +18,34 @@ function Chat() {
   const messagesContainerRef = useRef(null);
   const bottomRef = useRef(null);
   const [autoScroll, setAutoScroll] = useState(true);
+  const { thread_id } = useParams();
+  const threadId =
+    thread_id || localStorage.getItem("thread_id");
+  const token = localStorage.getItem("token");
 
+  useEffect(() => {
+  if (!thread_id) return;
+
+    loadThread();
+  }, [thread_id]);
+
+  const loadThread = async () => {
+    try {
+      const response = await api.get(`/threads/${thread_id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const formattedMessages = response.data.history.map((msg) => ({
+        role: msg.role === "human" ? "user" : "assistant",
+        content: msg.content,
+      }));
+      setMessages(formattedMessages);
+      localStorage.setItem("thread_id", thread_id);
+    } catch (error) {
+      console.error(error);
+    }
+  };
   useEffect(() => {
     if (autoScroll) {
       bottomRef.current?.scrollIntoView({
@@ -26,8 +54,7 @@ function Chat() {
     }
   }, [messages, loading, autoScroll]);
 
-  const threadId = localStorage.getItem("thread_id");
-  const token = localStorage.getItem("token");
+
 
   const handleScroll = () => {
     const container = messagesContainerRef.current;

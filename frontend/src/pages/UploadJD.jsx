@@ -38,6 +38,7 @@ function UploadJD() {
       });
 
       localStorage.setItem("thread_id", response.data.thread_id);
+      window.dispatchEvent(new Event("threadUpdated"));
       navigate("/upload-resume");
     } catch (error) {
       console.log(error);

@@ -20,6 +20,7 @@ function App() {
                 <Route path="/upload-jd" element={<UploadJD />} />
                 <Route path="/result" element={<Result />} />
                 <Route path="/chat" element={<Chat />} />
+                <Route path="/chat/:thread_id" element={<Chat />} />
             </Routes>
         </BrowserRouter>
     );
