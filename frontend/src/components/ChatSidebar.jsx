@@ -1,13 +1,17 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLocation } from "react-router-dom";
 
 import api from "../services/api";
 
 function ChatSidebar({ open, onClose }) {
+  const [renameId, setRenameId] = useState(null);
+  const [newTitle, setNewTitle] = useState("");
   const [menuOpen, setMenuOpen] = useState(null);
   const [threads, setThreads] = useState([]);
   const [loading, setLoading] = useState(false);
+  const location = useLocation();
 
   const navigate = useNavigate();
 
@@ -30,6 +34,10 @@ function ChatSidebar({ open, onClose }) {
       setLoading(false);
     }
   };
+  const activeThreadId =
+  location.pathname.startsWith("/chat/")
+    ? location.pathname.split("/").pop()
+    : null;
 
   useEffect(() => {
     if (open) {
@@ -71,10 +79,64 @@ function ChatSidebar({ open, onClose }) {
     };
   }, []);
 
-  const openThread = (threadId) => {
-    onClose();
-    navigate(`/chat/${threadId}`);
-  };
+
+  const renameThread = async () => {
+    try {
+        const token = localStorage.getItem("token");
+
+        await api.patch(
+        `/threads/${renameId}`,
+        {
+            title: newTitle,
+        },
+        {
+            headers: {
+            Authorization: `Bearer ${token}`,
+            },
+        }
+        );
+
+        setRenameId(null);
+        setMenuOpen(null);
+
+        fetchThreads();
+
+        window.dispatchEvent(new Event("threadUpdated"));
+    } catch (error) {
+        console.error(error);
+    }
+    };
+
+  const deleteThread = async (threadId) => {
+    const confirmed = window.confirm(
+        "Are you sure you want to delete this chat?"
+    );
+
+    if (!confirmed) return;
+
+    try {
+        const token = localStorage.getItem("token");
+
+        await api.delete(`/threads/${threadId}`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+        });
+
+        setMenuOpen(null);
+
+        fetchThreads();
+
+        window.dispatchEvent(new Event("threadUpdated"));
+    } catch (error) {
+        console.error(error);
+    }
+    };
+const openThread = (threadId) => {
+  onClose();
+  if (threadId === activeThreadId) return;
+  navigate(`/chat/${threadId}`);
+};
 
   return (
     <AnimatePresence>
@@ -110,13 +172,25 @@ function ChatSidebar({ open, onClose }) {
                 threads.map((thread) => (
                   <div
                     key={thread.thread_id}
-                    className="group relative flex items-center justify-between px-3 py-3 rounded-lg hover:bg-gray-100 transition"
+                        className={`group relative flex items-center justify-between px-3 py-3 rounded-lg transition ${
+                        activeThreadId === thread.thread_id
+                            ? "bg-evaluate/10"
+                            : "hover:bg-gray-100"
+                        }`}
                   >
                     <button
                       onClick={() => openThread(thread.thread_id)}
                       className="flex-1 text-left truncate"
                     >
-                      <p className="font-medium truncate">📝 {thread.title}</p>
+                      <p
+                        className={`font-medium truncate ${
+                            activeThreadId === thread.thread_id
+                            ? "text-evaluate"
+                            : ""
+                        }`}
+                        >
+                        📝 {thread.title}
+                      </p>
                     </button>
 
                     <button
@@ -135,12 +209,22 @@ function ChatSidebar({ open, onClose }) {
 
                     {menuOpen === thread.thread_id && (
                       <div className="absolute right-2 top-11 w-36 bg-white border rounded-lg shadow-lg z-50">
-                        <button className="block w-full text-left px-4 py-2 hover:bg-gray-100">
-                          Rename
+                        <button
+                        onClick={() => {
+                            setRenameId(thread.thread_id);
+                            setNewTitle(thread.title);
+                            setMenuOpen(null);
+                        }}
+                        className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                        >
+                        Rename
                         </button>
 
-                        <button className="block w-full text-left px-4 py-2 text-red-600 hover:bg-red-50">
-                          Delete
+                        <button
+                        onClick={() => deleteThread(thread.thread_id)}
+                        className="block w-full text-left px-4 py-2 text-red-600 hover:bg-red-50"
+                        >
+                        Delete
                         </button>
                       </div>
                     )}
@@ -151,6 +235,44 @@ function ChatSidebar({ open, onClose }) {
           </motion.div>
         </>
       )}
+      {renameId && (
+        <>
+            <div
+            className="fixed inset-0 bg-black/40 z-50"
+            onClick={() => setRenameId(null)}
+            />
+
+            <div className="fixed inset-0 flex items-center justify-center z-50">
+            <div className="bg-white rounded-xl shadow-xl w-96 p-6">
+                <h2 className="text-xl font-semibold mb-4">
+                Rename Chat
+                </h2>
+
+                <input
+                value={newTitle}
+                onChange={(e) => setNewTitle(e.target.value)}
+                className="w-full border rounded-lg px-4 py-2"
+                />
+
+                <div className="flex justify-end gap-3 mt-5">
+                <button
+                    onClick={() => setRenameId(null)}
+                    className="px-4 py-2 rounded-lg border"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    onClick={renameThread}
+                    className="px-4 py-2 rounded-lg bg-evaluate text-white"
+                >
+                    Save
+                </button>
+                </div>
+            </div>
+            </div>
+        </>
+        )}
     </AnimatePresence>
   );
 }
