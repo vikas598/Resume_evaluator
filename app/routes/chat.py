@@ -21,3 +21,4 @@ async def chat( request: chat_schema.ChatRequest ,db: Session= Depends(get_db), 
         return chat_service(request.message, db, thread.thread_id)
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+    

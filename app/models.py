@@ -25,23 +25,15 @@ class Thread(Base):
 
     thread_id: Mapped[str] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    title: Mapped[str] = mapped_column(nullable=True)
     parsed_resume: Mapped[dict] = mapped_column(JSONB, nullable=True)
     parsed_jd: Mapped[dict] = mapped_column(JSONB, nullable=True)
     result : Mapped[dict] = mapped_column(JSONB, nullable=True)
 
+    updated_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now())
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), nullable=False)
 
 
     user= relationship("User",back_populates= "threads")
 
-    evaluation = relationship("Evaluation", back_populates="threads", uselist=False, cascade="all, delete-orphan")
 
-class Evaluation(Base):
-    __tablename__="convo_history"
-
-    evaluation_id : Mapped[str] = mapped_column(primary_key=True)
-    thread_id : Mapped[str] = mapped_column(ForeignKey("thread.thread_id"), unique=True, nullable=False)
-    convo : Mapped[dict] = mapped_column(JSONB, nullable=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), nullable=False)
-
-    threads = relationship("Thread", back_populates="evaluation")

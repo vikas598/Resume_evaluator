@@ -1,5 +1,6 @@
 import time
 from uuid import uuid4
+from pathlib import Path
 
 from fastapi import UploadFile, HTTPException
 from sqlalchemy.orm import Session
@@ -21,7 +22,8 @@ def upload_jd_service(file: UploadFile, db:Session, current_user:User):
     thread= Thread(
         thread_id = str(uuid4()),
         user_id = current_user.id,
-        parsed_jd = parsed_jd.model_dump()
+        parsed_jd = parsed_jd.model_dump(),
+        title=Path(file.filename).stem,
     )
     db.add(thread)
     db.commit()

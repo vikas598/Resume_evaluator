@@ -12,6 +12,8 @@ model = "groq:llama-3.3-70b-versatile"
 def chat_service(message:str , db: Session, thread_id:str):
     build_agent = agent(thread_id, db)
     config = {"configurable": {"thread_id": thread_id}}
+    print("Thread ID passed to invoke:", thread_id)
+    print("Config:", config)
     response = build_agent.invoke({"messages": [{"role": "user", "content": message}]},
     config=config)
     return {

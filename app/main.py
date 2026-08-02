@@ -11,7 +11,7 @@ from app.config import settings
 from app.config import settings
 from app.database import Base, engine
 from app import models
-from app.routes import upload,auth,user,chat
+from app.routes import upload,auth,user,chat, thread
 
 # DB_URI = f'postgresql://{settings.DATABASE_USERNAME}:{settings.DATABASE_PASSWORD}@{settings.DATABASE_HOSTNAME}:{settings.DATABASE_PORT}/{settings.DATABASE_NAME}?sslmode=require&channel_binding=require'
 DB_URI = f'postgresql://{settings.DATABASE_USERNAME}:{settings.DATABASE_PASSWORD}@{settings.DATABASE_HOSTNAME}:{settings.DATABASE_PORT}/{settings.DATABASE_NAME}'
@@ -45,6 +45,7 @@ app.include_router(upload.router)
 app.include_router(auth.router)
 app.include_router(user.router)
 app.include_router(chat.router)
+app.include_router(thread.router)
 
 @app.get("/")
 def root():
@@ -58,3 +59,4 @@ if not API_KEY:
      raise ValueError("API key not found")
 
 client = Groq(api_key=API_KEY)
+
