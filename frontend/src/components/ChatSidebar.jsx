@@ -34,8 +34,7 @@ function ChatSidebar({ open, onClose }) {
       setLoading(false);
     }
   };
-  const activeThreadId =
-  location.pathname.startsWith("/chat/")
+  const activeThreadId = location.pathname.startsWith("/chat/")
     ? location.pathname.split("/").pop()
     : null;
 
@@ -79,64 +78,63 @@ function ChatSidebar({ open, onClose }) {
     };
   }, []);
 
-
   const renameThread = async () => {
     try {
-        const token = localStorage.getItem("token");
+      const token = localStorage.getItem("token");
 
-        await api.patch(
+      await api.patch(
         `/threads/${renameId}`,
         {
-            title: newTitle,
+          title: newTitle,
         },
         {
-            headers: {
+          headers: {
             Authorization: `Bearer ${token}`,
-            },
-        }
-        );
+          },
+        },
+      );
 
-        setRenameId(null);
-        setMenuOpen(null);
+      setRenameId(null);
+      setMenuOpen(null);
 
-        fetchThreads();
+      fetchThreads();
 
-        window.dispatchEvent(new Event("threadUpdated"));
+      window.dispatchEvent(new Event("threadUpdated"));
     } catch (error) {
-        console.error(error);
+      console.error(error);
     }
-    };
+  };
 
   const deleteThread = async (threadId) => {
     const confirmed = window.confirm(
-        "Are you sure you want to delete this chat?"
+      "Are you sure you want to delete this chat?",
     );
 
     if (!confirmed) return;
 
     try {
-        const token = localStorage.getItem("token");
+      const token = localStorage.getItem("token");
 
-        await api.delete(`/threads/${threadId}`, {
+      await api.delete(`/threads/${threadId}`, {
         headers: {
-            Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
-        });
+      });
 
-        setMenuOpen(null);
+      setMenuOpen(null);
 
-        fetchThreads();
+      fetchThreads();
 
-        window.dispatchEvent(new Event("threadUpdated"));
+      window.dispatchEvent(new Event("threadUpdated"));
     } catch (error) {
-        console.error(error);
+      console.error(error);
     }
-    };
-const openThread = (threadId) => {
-  onClose();
-  if (threadId === activeThreadId) return;
-  navigate(`/chat/${threadId}`);
-};
+  };
+  const openThread = (threadId) => {
+    onClose();
+    if (threadId === activeThreadId) return;
+    navigate(`/chat/${threadId}`);
+  };
 
   return (
     <AnimatePresence>
@@ -172,11 +170,11 @@ const openThread = (threadId) => {
                 threads.map((thread) => (
                   <div
                     key={thread.thread_id}
-                        className={`group relative flex items-center justify-between px-3 py-3 rounded-lg transition ${
-                        activeThreadId === thread.thread_id
-                            ? "bg-evaluate/10"
-                            : "hover:bg-gray-100"
-                        }`}
+                    className={`group relative flex items-center justify-between px-3 py-3 rounded-lg transition ${
+                      activeThreadId === thread.thread_id
+                        ? "bg-evaluate/10"
+                        : "hover:bg-gray-100"
+                    }`}
                   >
                     <button
                       onClick={() => openThread(thread.thread_id)}
@@ -184,11 +182,11 @@ const openThread = (threadId) => {
                     >
                       <p
                         className={`font-medium truncate ${
-                            activeThreadId === thread.thread_id
+                          activeThreadId === thread.thread_id
                             ? "text-evaluate"
                             : ""
                         }`}
-                        >
+                      >
                         📝 {thread.title}
                       </p>
                     </button>
@@ -210,21 +208,21 @@ const openThread = (threadId) => {
                     {menuOpen === thread.thread_id && (
                       <div className="absolute right-2 top-11 w-36 bg-white border rounded-lg shadow-lg z-50">
                         <button
-                        onClick={() => {
+                          onClick={() => {
                             setRenameId(thread.thread_id);
                             setNewTitle(thread.title);
                             setMenuOpen(null);
-                        }}
-                        className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                          }}
+                          className="block w-full text-left px-4 py-2 hover:bg-gray-100"
                         >
-                        Rename
+                          Rename
                         </button>
 
                         <button
-                        onClick={() => deleteThread(thread.thread_id)}
-                        className="block w-full text-left px-4 py-2 text-red-600 hover:bg-red-50"
+                          onClick={() => deleteThread(thread.thread_id)}
+                          className="block w-full text-left px-4 py-2 text-red-600 hover:bg-red-50"
                         >
-                        Delete
+                          Delete
                         </button>
                       </div>
                     )}
@@ -237,42 +235,40 @@ const openThread = (threadId) => {
       )}
       {renameId && (
         <>
-            <div
+          <div
             className="fixed inset-0 bg-black/40 z-50"
             onClick={() => setRenameId(null)}
-            />
+          />
 
-            <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="fixed inset-0 flex items-center justify-center z-50">
             <div className="bg-white rounded-xl shadow-xl w-96 p-6">
-                <h2 className="text-xl font-semibold mb-4">
-                Rename Chat
-                </h2>
+              <h2 className="text-xl font-semibold mb-4">Rename Chat</h2>
 
-                <input
+              <input
                 value={newTitle}
                 onChange={(e) => setNewTitle(e.target.value)}
                 className="w-full border rounded-lg px-4 py-2"
-                />
+              />
 
-                <div className="flex justify-end gap-3 mt-5">
+              <div className="flex justify-end gap-3 mt-5">
                 <button
-                    onClick={() => setRenameId(null)}
-                    className="px-4 py-2 rounded-lg border"
+                  onClick={() => setRenameId(null)}
+                  className="px-4 py-2 rounded-lg border"
                 >
-                    Cancel
+                  Cancel
                 </button>
 
                 <button
-                    onClick={renameThread}
-                    className="px-4 py-2 rounded-lg bg-evaluate text-white"
+                  onClick={renameThread}
+                  className="px-4 py-2 rounded-lg bg-evaluate text-white"
                 >
-                    Save
+                  Save
                 </button>
-                </div>
+              </div>
             </div>
-            </div>
+          </div>
         </>
-        )}
+      )}
     </AnimatePresence>
   );
 }
